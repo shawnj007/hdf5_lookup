@@ -723,7 +723,7 @@ void* get_variable_ids_by_name(const char* path, const char* group, const char* 
 	hid_t grp_h5id = H5Gopen(h5id, group, H5P_DEFAULT);
 
 	// Determine variable count in the group and get varids for each
-	//int varids[100] = {0};
+	//hid_t varids[100] = {0};
 	
 	hsize_t num_obj = 0;
 	// herr_t err_nvars = 
@@ -751,18 +751,18 @@ void* get_variable_ids_by_name(const char* path, const char* group, const char* 
 	// Retrieve the varid by the variable name
 	hid_t varid = H5Dopen(grp_h5id, name, H5P_DEFAULT);
 	
-	int* ret_ids = (int*) malloc(sizeof(int) * 3);
+	hid_t* ret_ids = (hid_t*) malloc(sizeof(hid_t) * 3);
 	ret_ids[0] = h5id;
 	ret_ids[1] = grp_h5id;
 	ret_ids[2] = varid;
 	
-	if (DEBUG_HDF5_HELPER) printf("getting %d %d %d\n", ret_ids[0], ret_ids[1], ret_ids[2]);
+	if (DEBUG_HDF5_HELPER) printf("getting %d %d %d\n", (int) ret_ids[0], (int) ret_ids[1], (int) ret_ids[2]);
 	
 	return (void*) ret_ids;
 }
 
-void* get_variable_dims(int grp_h5id, int varid) {
-	if (DEBUG_HDF5_HELPER) printf("get_variable_dims %d %d \n", grp_h5id, varid);
+void* get_variable_dims(hid_t grp_h5id, hid_t varid) {
+	if (DEBUG_HDF5_HELPER) printf("get_variable_dims %d %d \n", (int) grp_h5id, (int) varid);
 	
 	// Retrieve the metadata for the variable to learn
 	// ... dimensions (need all of the dimension ids)
@@ -782,10 +782,10 @@ void* get_variable_dims(int grp_h5id, int varid) {
 void* get_variable_dims_by_name(const char* path, const char* group, const char* name) {
 	if (DEBUG_HDF5_HELPER) printf("get_variable_dims_by_name: %s %s %s \n", path, group, name);
 		
-	int* ids     = get_variable_ids_by_name(path, group, name); // h5id remains open, need to close!
-	int h5id     = ids[0];
-	int grp_h5id = ids[1];
-	int varid    = ids[2];
+	hid_t* ids     = (hid_t*) get_variable_ids_by_name(path, group, name); // h5id remains open, need to close!
+	hid_t h5id     = ids[0];
+	hid_t grp_h5id = ids[1];
+	hid_t varid    = ids[2];
 	free(ids);
 	
 	size_t* dims = (size_t*) get_variable_dims(grp_h5id, varid);
@@ -795,7 +795,7 @@ void* get_variable_dims_by_name(const char* path, const char* group, const char*
 	return (void*) dims;
 }
 
-H5T_class_t get_variable_type(int varid) {
+H5T_class_t get_variable_type(hid_t varid) {
 	if (DEBUG_HDF5_HELPER) printf("get_variable_type\n");
 	
 	hid_t xtypep = H5Dget_type(varid);
@@ -812,10 +812,10 @@ H5T_class_t get_variable_type(int varid) {
 H5T_class_t get_variable_type_by_name(const char* path, const char* group, const char* name) {
 	if (DEBUG_HDF5_HELPER) printf("get_variable_type_by_name: %s %s %s \n", path, group, name);
 	
-	int* ids     = get_variable_ids_by_name(path, group, name); // h5id remains open, need to close!
-	//int h5id     = ids[0];
-	//int grp_h5id = ids[1];
-	int varid    = ids[2];
+	hid_t* ids     = (hid_t*) get_variable_ids_by_name(path, group, name); // h5id remains open, need to close!
+	//hid_t h5id     = ids[0];
+	//hid_t grp_h5id = ids[1];
+	hid_t varid    = ids[2];
 	free(ids);
 	
 	H5T_class_t type = get_variable_type(varid);
@@ -893,10 +893,10 @@ size_t get_type_size(hid_t xtypep) {
 void* get_variable_data_by_name(const char* path, const char* group, const char* name) {
 	if (DEBUG_HDF5_HELPER) printf("get_variable_data_by_name: %s %s %s \n", path, group, name);
 	
-	int* ids  = get_variable_ids_by_name(path, group, name); // ncid remains open, need to close!
-	//int h5id = ids[0];
-	int grp_h5id = ids[1];
-	int varid = ids[2];
+	hid_t* ids  = (hid_t*) get_variable_ids_by_name(path, group, name); // ncid remains open, need to close!
+	//hid_t h5id = ids[0];
+	hid_t grp_h5id = ids[1];
+	hid_t varid = ids[2];
 	free(ids);
 	
 	size_t* dims = (size_t*) get_variable_dims(grp_h5id, varid);
@@ -920,7 +920,7 @@ void* get_variable_data_by_name(const char* path, const char* group, const char*
 
 	// .. end-edness
 	// TODO
-	//int int nc_inq_var_endian(int ncid, int varid, int *endian)
+	//int int nc_inq_var_endian(int ncid, hid_t varid, int *endian)
 	/*		>>>> Should already be handeled within the library.
 	int endian = 0;
 	int err_end = nc_inq_var_endian(ncid, varid, &endian);
@@ -952,7 +952,7 @@ void* get_variable_data_by_name(const char* path, const char* group, const char*
 	if (DEBUG_HDF5_HELPER) printf("type_size: %d total_data_count: %d\n", (int) type_size, (int) total_data_count);
 	
 	// Retrieve the data using the varid
-	//int nc_get_var(int ncid, int varid, void* ip)
+	//int nc_get_var(int ncid, hid_t varid, void* ip)
 	void* data = (void*) malloc(type_size * total_data_count);
 	memset(data, '\0', type_size * total_data_count);
 	

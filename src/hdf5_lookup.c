@@ -71,7 +71,7 @@
 
 #include "hdf5_lookup.h"
 
-#define DEBUG_HDF5_LOOKUP 1
+#define DEBUG_HDF5_LOOKUP 0
 
 #define MAX_GOOD_DIS_KM 15
 

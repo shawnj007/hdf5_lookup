@@ -1,0 +1,24 @@
+Extract Dependency (HDF5)
+	$ tar -xvzf hdf5-1.12.0.tar.gz -C ../
+
+Compile Dependency (HDF5)
+	$ cd ../hdf5-1.12.0
+	$ ./configure
+	$ make clean
+	$ make
+	$ cd ../lookup
+
+Compiling
+	$ cd src
+	$ make -B
+	$ cd ..
+
+Before Running
+	** The location of the compiled libraries must be exported before the exectuable can be run **
+	$ export LD_LIBRARY_PATH=~/HDF5/hdf5-1.12.0/src/.libs/
+
+Running
+	$ ./hdf5_lookup /path/to/file.nc /group/variable1 {/group/variable2 {...}} /group/lat /group/lon target_lat target_lon
+	
+Returns
+	target_lat target_lon gc_distance_km obs_lat obs_lon variable1 {variable2 {...}}

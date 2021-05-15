@@ -19,5 +19,5 @@ obj/%.o: %.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 clean:
-	rm -f objs/*.o
 	rm -f *.o $(TARGET)
+	rm -f obj/*.o

@@ -236,7 +236,7 @@ int main (int argc, char** argv) {
 	
 	size_t *ll_dims = (size_t*) get_variable_dims_by_name(path, group_lon, name_lon);
 
-	/*********/	
+	/*********/
 	
 	if (DEBUG_HDF5_LOOKUP) printf("Finding target\n");
 
@@ -244,6 +244,8 @@ int main (int argc, char** argv) {
 	int cols = ll_dims[1];
 
 	int* indices = (int*) get_indices_from_lat_long(data_lat, data_lon, lat, lon, rows, cols);
+	
+	// TODO add handling for float/double of lat/lon
 
 	int row = indices[0];
 	int col = indices[1];
